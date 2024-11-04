@@ -1,6 +1,8 @@
 package com.cos.security1.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,6 +63,22 @@ public class IndexController {
 		user.setPassword(encodedPwd);
 		userRepository.save(user); //패스워드 암호화 필요
 		return "redirect:/loginForm";
+	}
+	
+	@Secured("ROLE_ADMIN")
+	@GetMapping("/info")
+	public @ResponseBody String info() {
+		return "info";
+	}
+	
+	/*
+	 * PreAuthorize - 메서드 실행전 확인
+	 * PostAuthorize - 메서드 실행후 확인
+	 */
+	@PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+	@GetMapping("/data")
+	public @ResponseBody String data() {
+		return "data";
 	}
 }
 
