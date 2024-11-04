@@ -23,7 +23,7 @@ public class SecurityConfig {
 		return http
 				.authorizeHttpRequests(
 						authorizeHttpRequestsCustomizer -> authorizeHttpRequestsCustomizer
-						.requestMatchers("/user/**").authenticated()
+						.requestMatchers("/user/**").authenticated() //인증만 되면 들어가도록 함
 						.requestMatchers("/manager/**").hasAnyRole("manager", "admin")
 						.requestMatchers("/admin/**").hasAnyRole("admin")
 						.anyRequest().permitAll()
@@ -31,7 +31,8 @@ public class SecurityConfig {
 				.formLogin(
 						formLoginCustomizer -> formLoginCustomizer
 						.loginPage("/loginForm")
-						.defaultSuccessUrl("/")
+						.loginProcessingUrl("/login") // login 호출시 시큐리티가 낚아채서 대신 로그인
+						.defaultSuccessUrl("/") //특정 페이지 -> 성공시 특정페이지로 이동
 						)
 				.csrf(AbstractHttpConfigurer::disable)
 				.build();

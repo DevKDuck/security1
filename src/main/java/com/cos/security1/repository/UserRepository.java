@@ -10,5 +10,7 @@ import com.cos.security1.model.User;
 //Dependency Injection (DI)
 //객체 생성 및 관리에 대한 책임을 IoC 컨테이너가 가지며, 필요한 객체를 직접 생성하거나 외부에서 주입받는 방식
 public interface UserRepository extends JpaRepositoryImplementation<User, Integer>{
-
+	
+	//select * from user where username = 1?
+	public User findByUsername(String username);
 }
