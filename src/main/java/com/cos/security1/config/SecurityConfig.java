@@ -22,10 +22,10 @@ public class SecurityConfig {
 	@Autowired
 	private PrincipalOAuth2UserService principalOAuth2UserService;
 	
-	@Bean
-	BCryptPasswordEncoder encodedPwd() {
-		return new BCryptPasswordEncoder();
-	}
+//	@Bean
+//	BCryptPasswordEncoder encodedPwd() {
+//		return new BCryptPasswordEncoder();
+//	}
 
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

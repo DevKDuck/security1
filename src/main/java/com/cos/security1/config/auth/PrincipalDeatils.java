@@ -2,9 +2,11 @@ package com.cos.security1.config.auth;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import com.cos.security1.model.User;
 
@@ -21,12 +23,18 @@ Security Session => Authentication => UserDeatails
  */
 
 @Data
-public class PrincipalDeatils implements UserDetails{
+public class PrincipalDeatils implements UserDetails,OAuth2User{
 	
 	private User user;
+	private Map<String,Object> attributes;
 	
 	public PrincipalDeatils(User user) {
 		this.user = user;
+	}
+	
+	public PrincipalDeatils(User user, Map<String,Object> attributes) {
+		this.user = user;
+		this.attributes = attributes;
 	}
 
 	//해당 유저의 권한을 리턴하는 곳
@@ -51,6 +59,17 @@ public class PrincipalDeatils implements UserDetails{
 	@Override
 	public String getUsername() {
 		return user.getUsername();
+	}
+
+	@Override
+	public Map<String, Object> getAttributes() {
+		return attributes;
+	}
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

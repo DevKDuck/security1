@@ -56,7 +56,9 @@ public class IndexController {
 	 * 페이지를 만들지 않아 임시 @ResponseBody붙임
 	 */
 	@GetMapping("/user")
-	public @ResponseBody String user() {
+	public @ResponseBody String user(@AuthenticationPrincipal PrincipalDeatils principalDeatils) {
+		
+		System.out.println("PrincipalDetail로 일반,Oauth2 로그인정보 가져오기"+principalDeatils.getUser());
 		return "user";
 	}
 	
