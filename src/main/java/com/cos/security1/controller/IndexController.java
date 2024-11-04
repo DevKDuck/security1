@@ -3,12 +3,17 @@ package com.cos.security1.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.AuthenticatedPrincipal;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cos.security1.config.auth.PrincipalDeatils;
 import com.cos.security1.model.User;
 import com.cos.security1.repository.UserRepository;
 
@@ -20,6 +25,28 @@ public class IndexController {
 	
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder; 
+	
+	//일반 로그인
+	@GetMapping("/test/login")
+	public @ResponseBody String testLogin(Authentication authentication, @AuthenticationPrincipal PrincipalDeatils userDetails) {
+		PrincipalDeatils principalDeatils = (PrincipalDeatils)authentication.getPrincipal(); //Object로 받아서 다운캐스팅
+		System.out.println("일반 로그인 Authentication" + principalDeatils.getUser());
+		
+		System.out.println("일반 로그인 @AuthenticationPrincipal" + userDetails.getUser());
+		return "testlogin";
+	}
+	
+	//oauth2 로그인
+		@GetMapping("/test/ouath/login")
+		public @ResponseBody String testOauthLogin(Authentication authentication, @AuthenticationPrincipal OAuth2User oauth) {
+			OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal(); //Object로 받아서 다운캐스팅
+			System.out.println("ouath 로그인 Authentication" + oAuth2User.getAttributes());
+			
+			System.out.println("ouath 로그인 @AuthenticationPrincipal" + oauth.getAttributes());
+			return "testlogin";
+		}
+	
+	
 	
 	@GetMapping({"","/"})
 	public String index() {
