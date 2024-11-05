@@ -1,5 +1,7 @@
 package com.cos.security1.config.auth.oatuh;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -12,6 +14,8 @@ import com.cos.security1.config.auth.PrincipalDeatils;
 import com.cos.security1.config.auth.oatuh.provider.FackbookUserInfo;
 import com.cos.security1.config.auth.oatuh.provider.GithubUserInfo;
 import com.cos.security1.config.auth.oatuh.provider.GoogleUserInfo;
+import com.cos.security1.config.auth.oatuh.provider.KakaoUserInfo;
+import com.cos.security1.config.auth.oatuh.provider.NaverUserInfo;
 import com.cos.security1.config.auth.oatuh.provider.OAuth2UserInfo;
 import com.cos.security1.model.User;
 import com.cos.security1.repository.UserRepository;
@@ -52,6 +56,18 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService{
 			oAuth2UserInfo = new GithubUserInfo(oAuth2User.getAttributes());
 			System.out.println("github login");
 		}
+		else if (userRequest.getClientRegistration().getRegistrationId().equals("naver")) {
+			//response는 Object로 반환되어 다운 캐스팅
+			Map<String,Object> attributes = (Map<String,Object>)oAuth2User.getAttributes().get("response");
+			oAuth2UserInfo = new NaverUserInfo(attributes);
+			System.out.println("naver login");
+		}
+		else if (userRequest.getClientRegistration().getRegistrationId().equals("kakao")) {
+			//response는 Object로 반환되어 다운 캐스팅			
+			oAuth2UserInfo = new KakaoUserInfo(oAuth2User.getAttributes());
+			System.out.println("kakao login");
+		}
+		
 		else {
 			System.out.println("다른 설정 안한 Oauth2 login");
 			
@@ -62,7 +78,7 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService{
 		String providerId = oAuth2UserInfo.getProviderId();
 		String username = provider + "_" + providerId; // ex) google_id
 		String password = bCryptPasswordEncoder.encode("Devkduck"); //oauth 로그인시 비밀번호 쓰지 않아 필요없는값
-		String email = oAuth2UserInfo.getProviderId();
+		String email = oAuth2UserInfo.getEmail();
 		String role = "ROLE_USER";
 		
 		User user = userRepository.findByUsername(username);
