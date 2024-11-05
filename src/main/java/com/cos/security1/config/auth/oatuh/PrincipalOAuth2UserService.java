@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.cos.security1.config.auth.PrincipalDeatils;
 import com.cos.security1.config.auth.oatuh.provider.FackbookUserInfo;
+import com.cos.security1.config.auth.oatuh.provider.GithubUserInfo;
 import com.cos.security1.config.auth.oatuh.provider.GoogleUserInfo;
 import com.cos.security1.config.auth.oatuh.provider.OAuth2UserInfo;
 import com.cos.security1.model.User;
@@ -35,8 +36,9 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService{
 		//userRequest 정보 => LoadUser 함수 호출 => 구글로 부터 회원 정보 받음
 		System.out.println("getAttributes: " + oAuth2User.getAttributes());
 		
-		OAuth2UserInfo oAuth2UserInfo = null;
 		
+		//OAuthClient 라이브러리에서는 Google,Facebook,GitHub,Okta 만 provider를 제공한다고 함
+		OAuth2UserInfo oAuth2UserInfo = null;
 		
 		if (userRequest.getClientRegistration().getRegistrationId().equals("google")) {
 			oAuth2UserInfo = new GoogleUserInfo(oAuth2User.getAttributes());
@@ -45,8 +47,14 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService{
 		else if (userRequest.getClientRegistration().getRegistrationId().equals("facebook")) {
 			oAuth2UserInfo = new FackbookUserInfo(oAuth2User.getAttributes());
 			System.out.println("facebook login");
-		}else {
+		}
+		else if (userRequest.getClientRegistration().getRegistrationId().equals("github")) {
+			oAuth2UserInfo = new GithubUserInfo(oAuth2User.getAttributes());
+			System.out.println("github login");
+		}
+		else {
 			System.out.println("다른 설정 안한 Oauth2 login");
+			
 		}
 		
 		//회원가입 강제로 진행
