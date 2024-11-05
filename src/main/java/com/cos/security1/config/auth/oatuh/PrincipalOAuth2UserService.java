@@ -9,6 +9,9 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import com.cos.security1.config.auth.PrincipalDeatils;
+import com.cos.security1.config.auth.oatuh.provider.FackbookUserInfo;
+import com.cos.security1.config.auth.oatuh.provider.GoogleUserInfo;
+import com.cos.security1.config.auth.oatuh.provider.OAuth2UserInfo;
 import com.cos.security1.model.User;
 import com.cos.security1.repository.UserRepository;
 
@@ -32,12 +35,26 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService{
 		//userRequest 정보 => LoadUser 함수 호출 => 구글로 부터 회원 정보 받음
 		System.out.println("getAttributes: " + oAuth2User.getAttributes());
 		
+		OAuth2UserInfo oAuth2UserInfo = null;
+		
+		
+		if (userRequest.getClientRegistration().getRegistrationId().equals("google")) {
+			oAuth2UserInfo = new GoogleUserInfo(oAuth2User.getAttributes());
+			System.out.println("google login");
+		}
+		else if (userRequest.getClientRegistration().getRegistrationId().equals("facebook")) {
+			oAuth2UserInfo = new FackbookUserInfo(oAuth2User.getAttributes());
+			System.out.println("facebook login");
+		}else {
+			System.out.println("다른 설정 안한 Oauth2 login");
+		}
+		
 		//회원가입 강제로 진행
-		String provider = userRequest.getClientRegistration().getRegistrationId(); //google
-		String providerId = oAuth2User.getAttribute("sub"); //pkID
+		String provider = oAuth2UserInfo.getPorvider();
+		String providerId = oAuth2UserInfo.getProviderId();
 		String username = provider + "_" + providerId; // ex) google_id
 		String password = bCryptPasswordEncoder.encode("Devkduck"); //oauth 로그인시 비밀번호 쓰지 않아 필요없는값
-		String email = oAuth2User.getAttribute("email");
+		String email = oAuth2UserInfo.getProviderId();
 		String role = "ROLE_USER";
 		
 		User user = userRepository.findByUsername(username);
